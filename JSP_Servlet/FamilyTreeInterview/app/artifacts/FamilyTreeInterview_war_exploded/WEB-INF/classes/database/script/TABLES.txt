@@ -1,0 +1,71 @@
+-- Table: public.tblpersons
+
+-- DROP TABLE public.tblpersons;
+
+CREATE TABLE public.tblpersons
+(
+    personid integer NOT NULL DEFAULT nextval('tblpersons_personid_seq'::regclass) ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 9223372036854775807 CACHE 1 ),
+    name character varying(30) COLLATE pg_catalog."default" NOT NULL,
+    yeardob integer NOT NULL,
+    CONSTRAINT tblpersons_pkey PRIMARY KEY (personid)
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.tblpersons
+    OWNER to postgres;
+
+
+
+-- Table: public.tblrelationship
+
+-- DROP TABLE public.tblrelationship;
+
+CREATE TABLE public.tblrelationship
+(
+    relationid integer NOT NULL,
+    personone_id integer NOT NULL,
+    persontwo_id integer NOT NULL,
+    person_role integer NOT NULL,
+    CONSTRAINT tblrelationship_pkey PRIMARY KEY (relationid),
+    CONSTRAINT tblrelationship_personone_id_fkey FOREIGN KEY (personone_id)
+        REFERENCES public.tblpersons (personid) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT tblrelationship_personone_role_fkey FOREIGN KEY (person_role)
+        REFERENCES public.tblroles (roleid) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT tblrelationship_persontwo_id_fkey FOREIGN KEY (persontwo_id)
+        REFERENCES public.tblpersons (personid) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.tblrelationship
+    OWNER to postgres;
+
+
+-- Table: public.tblroles
+
+-- DROP TABLE public.tblroles;
+
+CREATE TABLE public.tblroles
+(
+    roleid integer NOT NULL DEFAULT nextval('tblroles_roleid_seq'::regclass) ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 9223372036854775807 CACHE 1 ),
+    roledesc character varying(30) COLLATE pg_catalog."default" NOT NULL,
+    CONSTRAINT tblroles_pkey PRIMARY KEY (roleid)
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.tblroles
+    OWNER to postgres;

@@ -1,0 +1,31 @@
+-- FUNCTION: public.selectfamilytree(integer)
+
+-- DROP FUNCTION public.selectfamilytree(integer);
+
+CREATE OR REPLACE FUNCTION public.selectfamilytree(
+	idval integer)
+    RETURNS TABLE(yourid integer, yourname character varying, youryeardob integer, relid integer, relname character varying, roleid integer, roledesc character varying, yeardob integer, relationid integer) 
+    LANGUAGE 'plpgsql'
+
+    COST 100
+    VOLATILE 
+    ROWS 1000
+AS $BODY$
+  BEGIN
+  RETURN QUERY
+  
+  
+  select s.personid as yourid,s.name as yourname,s.yeardob as youryeardob,rel.persontwo_id as relid
+  ,t.name as relname,rel.person_role as roleid,rel.roledesc,t.yeardob,rel.relationid  from
+(Select * from tblpersons p
+join tblrelationship l on l.personone_id = p.personid
+join tblroles r on r.roleid = l.person_role
+where p.personid=$1) as rel
+join tblpersons t on t.personid= rel.persontwo_id
+join tblpersons s on s.personid= rel.personone_id;
+  
+   END 
+ $BODY$;
+
+ALTER FUNCTION public.selectfamilytree(integer)
+    OWNER TO postgres;
